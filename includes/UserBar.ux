@@ -1,0 +1,33 @@
+<Panel Color="#000" Padding="10" Dock="Bottom">
+	<JavaScript>
+		var FileSystem = require("FuseJS/FileSystem");
+		var Observable = require("FuseJS/Observable");
+
+		function gotoMainMenu(){
+			router.push("mainMenu");
+		}
+
+		module.exports = {
+			gotoMainMenu: gotoMainMenu
+		}
+	</JavaScript>
+
+	<DockPanel>
+		<Image Dock="Left" Width="25" File="../assets/icon_menu.png">
+			<Clicked>
+				<Callback Handler="{gotoMainMenu}" />
+			</Clicked>
+		</Image>
+
+		<StackPanel Alignment="Center">
+			<Text TextColor="#FFF" TextAlignment="Center">{name}</Text>
+			<Text TextColor="#999" FontSize="12" TextAlignment="Center">{email}</Text>
+		</StackPanel>
+
+		<Image Dock="Right" Width="30" File="../assets/icon_logout.png">
+			<Clicked>
+				<Callback Handler="{logout}" />
+			</Clicked>
+		</Image>
+	</DockPanel>
+</Panel>

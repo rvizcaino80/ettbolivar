@@ -1,0 +1,179 @@
+<Page ux:Class="Notificaciones" Color="#FFF">
+	<Router ux:Dependency="router" />
+
+	<JavaScript File="Notificaciones.js" />
+
+	<Activated>
+		<Callback Handler="{check}"/>
+	</Activated>
+
+	<Notification Visibility="Hidden" ux:Name="notificationJustSubscribed"
+		Title="Gracias por suscribirse"
+		Text="A partir de ahora recibirá notificaciones importantes vía electrónica.">
+
+		<WhileTrue ux:Name="notificationJustSubscribedSwitch" Value="{justSubscribed}">
+			<Change notificationJustSubscribed.Visibility="Visible" />
+		</WhileTrue>
+
+		<Clicked>
+			<Toggle Target="notificationJustSubscribedSwitch" />
+		</Clicked>
+	</Notification>
+
+	<EdgeNavigator>
+		<Panel ux:Name="sidebar" Edge="Left" Margin="0,0,56,0" Background="#37474F">
+
+			<StackPanel>
+				<Panel Padding="20" Margin="0, 0, 0, 20">
+					<Rectangle Fill="#252F35" Layer="Background" />
+					<Image File="../assets/logo_splash.png" Width="225" Alignment="Left" />
+				</Panel>
+
+				<Panel Padding="20,10">
+					<Text FontSize="18" Color="#FFF" Value="Consulta de Vehículo" />
+				</Panel>
+
+				<Panel Padding="20,10">
+					<Text FontSize="18" Color="#FFF" Value="Consulta de Multas" />
+				</Panel>
+
+				<Panel Padding="20,10">
+					<Text FontSize="18" Color="#FFF" Value="Servicio de Grúa" />
+				</Panel>
+
+				<Panel Padding="20,10">
+					<Text FontSize="18" Color="#FFF" Value="Notificaciones Automáticas" />
+				</Panel>
+
+				<Panel Padding="20,10">
+					<Text FontSize="18" Color="#FFF" Value="Tráfico en Arjona" />
+				</Panel>
+
+				<Panel Padding="20,10">
+					<Text FontSize="18" Color="#FFF" Value="Reporte una Novedad" />
+				</Panel>
+
+				<FilledButton Text="Cerrar Sesión" Margin="20, 40">
+					<Clicked>
+						<Callback Handler="{logout}" />
+					</Clicked>
+				</FilledButton>
+			</StackPanel>
+
+			<Shadow ux:Name="shadow" Angle="180" Distance="8" Size="16" Color="#0000" />
+			<ActivatingAnimation>
+				<Change shadow.Color="#0004" />
+			</ActivatingAnimation>
+		</Panel>
+
+		<StackPanel>
+			<WhileTrue Value="{aceptaNotificaciones}">
+				<Change MsgYaAceptaNotificaciones.Visibility="Visible" />
+			</WhileTrue>
+
+			<Panel>
+				<Shadow ux:Name="topBarShadow" Distance="3" Size="3" Color="#00000035" />
+
+				<StackPanel Orientation="Horizontal" Margin="10">
+					<Image ux:Name="menuIcon" Width="20" Margin="0, 0, 15, 0" File="../assets/icon_menu.png">
+						<Clicked>
+							<NavigateToggle Target="sidebar" />
+						</Clicked>
+					</Image>
+
+					<Panel>
+						<Text FontSize="20" TextAlignment="Left" Color="#FFF" Value="ETT Bolívar" />
+					</Panel>
+				</StackPanel>
+
+				<Rectangle Fill="#000" Layer="Background" />
+			</Panel>
+
+			<Panel Height="200">
+				<Image Width="100%" StretchMode="UniformToFill" File="../assets/banner-notificaciones.jpg"
+					Layer="Background" />
+
+				<Panel Alignment="BottomRight" Width="100%">
+					<Text FontSize="18" Color="#000"  Margin="20,7" Value="Notificaciones Automáticas" />
+					<Rectangle Fill="#FFCC00" Opacity="0.65" />
+				</Panel>
+			</Panel>
+
+			<Panel Padding="20">
+				<Text FontSize="16" TextWrapping="Wrap" TextColor="#4D4D4D" Value="Sea notificado a través de medios electrónicos de cualquier actividad relacionada a su persona, de igual manera de cualquier actuación administrativa en la que se le vincule llevada a cabo por la Secretaria de Transito de Arjona." />
+			</Panel>
+
+			<Panel ux:Name="MsgYaAceptaNotificaciones" Visibility="Collapsed" Padding="20" Margin="20">
+				<Text TextWrapping="Wrap" FontSize="14" TextColor="#4D4D4D" Value="Usted ya se encuentra registrado para recibir notificaciones electrónicas automáticas. Si desea retirar el servicio por favor comuníquese con nosotros al correo electrónico tramites@ettbolivar.com" />
+
+				<Rectangle Fill="#C9FFEA" Layer="Background" CornerRadius="4">
+					<Stroke Color="#2EE89D" Width="3" />
+				</Rectangle>
+			</Panel>
+
+			<Panel
+				ux:Name="BtnAceptaNotificaciones"
+				HitTestMode="LocalBounds"
+				Color="#FFCC00"
+				Padding="20"
+				Margin="20"
+				Visibility="Collapsed"
+				>
+
+				<WhileTrue Value="{isSubscribing}">
+					<Change loader.Opacity="1" />
+					<Change text.Opacity="0" />
+				</WhileTrue>
+
+				<Text
+					ux:Name="text"
+					Value="Acepto Recibir Notificaciones"
+					Color="#000"
+					FontSize="16"
+					Opacity="1"
+					Alignment="Center"
+					/>
+
+				<Panel ux:Name="loader" Opacity="0">
+					<Circle
+						ux:Name="rotatingStroke"
+						Width="30"
+						Height="30"
+						StartAngleDegrees="-45"
+						EndAngleDegrees="45"
+						>
+						<Stroke Width="2" Color="#000" />
+					</Circle>
+
+					<Circle Color="#000" Width="15" Height="15">
+						<Timeline ux:Name="myTimeline">
+							<Scale Factor=".5" Duration=".25" Easing="CircularOut" EasingBack="CircularIn" />
+							<Scale Factor="2" Duration=".25" Delay=".25" Easing="BounceOut" EasingBack="BounceIn" />
+						</Timeline>
+					</Circle>
+					<WhileFalse>
+						<Cycle Target="myTimeline.TargetProgress" Low="0" High="1" Frequency=".5" />
+						<Spin Target="rotatingStroke" Frequency="1" />
+					</WhileFalse>
+				</Panel>
+
+				<WhilePressed>
+					<Change BtnAceptaNotificaciones.Color="#FFD15D" Duration="0.05" DurationBack=".2" />
+				</WhilePressed>
+
+				<WhileTrue Value="{aceptaNotificaciones}">
+					<Change BtnAceptaNotificaciones.Visibility="Collapsed" />
+				</WhileTrue>
+
+				<WhileFalse Value="{aceptaNotificaciones}">
+					<Change BtnAceptaNotificaciones.Visibility="Visible" />
+				</WhileFalse>
+
+				<Clicked>
+					<Callback Handler="{subscribe}" />
+				</Clicked>
+			</Panel>
+
+		</StackPanel>
+	</EdgeNavigator>
+</Page>

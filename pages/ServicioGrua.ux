@@ -1,0 +1,43 @@
+<Page ux:Class="ServicioGrua" Color="#FFF">
+	<Router ux:Dependency="router" />
+
+	<JavaScript File="ServicioGrua.js" />
+
+	<Activated>
+	    <Callback Handler="{check}"/>
+	</Activated>
+
+	<Panel>
+		<Busy ux:Name="isBusy" IsActive="true" />
+		<WhileBusy>
+			<Change loadingPanel.Visibility="Visible" />
+		</WhileBusy>
+		<MyLoadingIndicator ux:Name="loadingPanel" Visibility="Hidden" />
+	</Panel>
+
+	<StackPanel>
+		<StackPanel>
+			<Panel Color="#FFCC00" Padding="15">
+				<Image File="../assets/logo.png" MaxWidth="55%" StretchMode="Uniform" />
+			</Panel>
+
+			<ux:Include File="../includes/UserBar.ux" />
+
+		</StackPanel>
+
+		<StackPanel>
+			<Text
+				Margin="20, 20, 0, 0"
+				FontSize="22"
+				Color="#333">
+				Solicitud de Grúa
+			</Text>
+
+			<TextView  TextWrapping="Wrap" Padding="20" Margin="4" TextColor="#000">
+			        A través del siguiente servicio usted podrá solicitar un servicio de grúa que de manera rápida lo ayudará a salir rapidamente de su emergencia.
+			</TextView>
+
+		</StackPanel>
+	</StackPanel>
+
+</Page>

@@ -1,0 +1,234 @@
+<App Background="#000">
+	<JavaScript>
+    	var API = require("/Api.js");
+		var Observable = require("FuseJS/Observable");
+		var FileSystem = require("FuseJS/FileSystem");
+		var showNotification = Observable(false);
+
+		var name = Observable();
+		var email = Observable();
+		var password = Observable();
+		var path = Observable(FileSystem.dataDirectory + "/" + "auth.tmp");
+
+		function updateUserData(){
+			console.log("Updating user data");
+			FileSystem.exists(path.value)
+			    .then(function(x) {
+					FileSystem.readTextFromFile(path.value).then(function(contents) {
+						var data = JSON.parse(contents);
+						name.value = data.name;
+						email.value = data.email;
+					}, function(error) {
+						console.log(error);
+					});
+			    }, function(error) {
+			        console.log("Unable to check if file exists");
+			    });
+		}
+
+
+		function hideNotification(){
+			showNotification.value = false;
+		}
+
+		function login(){
+			isBusy.activate();
+			API.login(email.value, password.value)
+				.then(function(response){
+                    isBusy.deactivate();
+
+                    console.log(JSON.stringify(response));
+
+                    if(response.logged){
+						console.log("Welcome");
+                        FileSystem.writeTextToFile(path.value, JSON.stringify(response));
+						updateUserData();
+                        router.push("mainMenu");
+                    }else{
+                        console.log('Login attempt failed');
+                        showNotification.value = true;
+                    }
+                });
+		}
+
+		function logout(){
+			name.value = "";
+			email.value = "";
+			password.value = "";
+
+			FileSystem.delete(path.value)
+			    .then(function() {
+			        console.log("Logout succeeded");
+					router.push("splashPage");
+			    }, function(error) {
+			        console.log("Unable to delete file");
+			    });
+		}
+
+		function gotoMainMenu(){
+   			router.push("mainMenu");
+   		}
+
+		module.exports = {
+			name: name,
+			email: email,
+			password: password,
+			path: path,
+			login: login,
+			logout: logout,
+			showNotification: showNotification,
+			hideNotification: hideNotification,
+   			gotoMainMenu: gotoMainMenu,
+   			updateUserData: updateUserData
+		};
+	</JavaScript>
+
+	<!--Notification Panel-->
+	<Panel ux:Class="Notification">
+		<string ux:Property="Title" />
+        <string ux:Property="Text" />
+
+		<Panel Alignment="Center" Padding="20" MaxWidth="85%">
+			<Rectangle Layer="Background" Fill="#FFF"></Rectangle>
+			<StackPanel>
+				<Text TextColor="#000" FontSize="20" TextAlignment="Center" Margin="0, 0, 0, 10">
+					{ReadProperty Title}
+				</Text>
+				<Text TextColor="#999" TextAlignment="Center" TextWrapping="Wrap">
+					{ReadProperty Text}
+				</Text>
+			</StackPanel>
+		</Panel>
+
+		<Rectangle Fill="#000" Opacity="0.75" />
+	</Panel>
+
+	<Notification
+		ux:Name="notification"
+		Title="Intento de Acceso Denegado"
+		Text="Por favor verifique sus datos e intente nuevamente."
+		>
+		<WhileTrue Value="{showNotification}">
+			<Change notification.Visibility="Visible" />
+		</WhileTrue>
+
+		<WhileFalse Value="{showNotification}">
+			<Change notification.Visibility="Hidden" />
+		</WhileFalse>
+
+		<Clicked>
+			<Callback Handler="{hideNotification}" />
+		</Clicked>
+	</Notification>
+
+	<!--Loading Panel-->
+	<Panel>
+		<Busy ux:Name="isBusy" IsActive="false" />
+		<WhileBusy>
+			<Change loadingPanel.Visibility="Visible" />
+		</WhileBusy>
+		<MyLoadingIndicator ux:Name="loadingPanel" Visibility="Hidden" />
+	</Panel>
+
+	<!--Loading Animation-->
+	<Panel ux:Class="MyLoadingIndicator">
+        <Circle ux:Name="rotatingStroke" Width="50" Height="50" StartAngleDegrees="-45" EndAngleDegrees="45">
+            <Stroke Width="2" Color="#FFF" />
+        </Circle>
+        <Circle Color="#FFF" Width="20" Height="20">
+            <Timeline ux:Name="myTimeline">
+                <Scale Factor=".5" Duration=".25" Easing="CircularOut" EasingBack="CircularIn" />
+                <Scale Factor="2" Duration=".25" Delay=".25" Easing="BounceOut" EasingBack="BounceIn" />
+            </Timeline>
+        </Circle>
+        <WhileFalse>
+            <Cycle Target="myTimeline.TargetProgress" Low="0" High="1" Frequency=".5" />
+            <Spin Target="rotatingStroke" Frequency="1" />
+        </WhileFalse>
+        <Rectangle Opacity="0.5" Color="#000" />
+    </Panel>
+
+	<!--Text Input-->
+    <TextInput ux:Class="Input" PlaceholderText="{ReadProperty Placeholder}" IsPassword="false" TextColor="#FFCC00" CaretColor="#CCC" PlaceholderColor="#CCC" Padding="15" Margin="0, 0, 0, 15">
+
+        <string ux:Property="Name" />
+        <string ux:Property="Placeholder" />
+
+	    <Rectangle Layer="Background" Opacity="0.5">
+	        <Stroke ux:Name="stroke" Width="1" Brush="#BBB" />
+	    </Rectangle>
+
+	    <WhileFocused>
+	    	<Change stroke.Brush="#FFCC00" Duration="0.05" DurationBack=".2" />
+	    </WhileFocused>
+	</TextInput>
+
+	<!--TRANSPARENT BUTTON-->
+    <Panel ux:Class="TransparentButton" HitTestMode="LocalBounds">
+        <string ux:Property="Text" />
+        <Text ux:Name="text" Value="{ReadProperty Text}" Color="#BBB" Alignment="Center" Margin="20,15" />
+
+        <WhilePressed>
+            <Change text.Color="#FFF" Duration="0.05" DurationBack=".2" />
+        </WhilePressed>
+    </Panel>
+
+	<!--FILLED BUTTON-->
+    <Panel ux:Class="FilledButton" HitTestMode="LocalBounds" Color="#FFCC00">
+        <string ux:Property="Text" />
+        <Text ux:Name="text" Value="{ReadProperty Text}" Color="#000" FontSize="16" Alignment="Center" Margin="30,15" />
+
+        <WhilePressed>
+            <Change this.Color="#FFD15D" Duration="0.05" DurationBack=".2" />
+        </WhilePressed>
+    </Panel>
+
+	<!--TopBar-->
+    <Panel ux:Class="TopBar" Color="#000" HideMenuIcon="false">
+		<bool ux:Property="HideMenuIcon" />
+
+		<WhileTrue Value="{ReadProperty HideMenuIcon}">
+			<Change menuIcon.Visibility="Hidden" />
+		</WhileTrue>
+
+		<StackPanel>
+			<Panel Color="#FFCC00" Padding="15">
+				<Image File="assets/logo.png" MaxWidth="55%" StretchMode="Uniform" />
+			</Panel>
+
+			<DockPanel Padding="10">
+
+				<Image ux:Name="menuIcon" Dock="Left" Width="25" File="assets/icon_menu.png">
+					<Clicked>
+						<Callback Handler="{gotoMainMenu}" />
+					</Clicked>
+				</Image>
+
+				<StackPanel Alignment="Center">
+					<Text TextColor="#FFF" TextAlignment="Center">{name}</Text>
+					<Text TextColor="#999" FontSize="12" TextAlignment="Center">{email}</Text>
+				</StackPanel>
+
+				<Image Dock="Right" Width="30" File="assets/icon_logout.png">
+					<Clicked>
+						<Callback Handler="{logout}" />
+					</Clicked>
+				</Image>
+			</DockPanel>
+		</StackPanel>
+    </Panel>
+
+	<!--APP-->
+    <ClientPanel>
+    	<Router ux:Name="router" />
+
+        <Navigator DefaultPath="splashPage">
+            <SplashPage ux:Template="splashPage" router="router" />
+            <MainMenu ux:Template="mainMenu" router="router" />
+            <ServicioGrua ux:Template="servicioGrua" router="router" />
+            <ConsultaRunt ux:Template="consultaRunt" router="router" />
+            <ConsultaSimit ux:Template="consultaSimit" router="router" />
+            <Notificaciones ux:Template="notificaciones" router="router" />
+        </Navigator>
+    </ClientPanel>
+</App>

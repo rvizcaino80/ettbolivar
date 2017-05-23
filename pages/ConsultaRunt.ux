@@ -1,0 +1,22 @@
+<Page ux:Class="ConsultaRunt" Color="#FFF">
+	<Router ux:Dependency="router" />
+
+	<JavaScript File="ConsultaRunt.js" />
+
+	<DockPanel>
+		<TopBar Dock="Top" />
+
+		<NativeViewHost Dock="Fill">
+            <WebView ZoomEnabled="false" Url="https://www.runt.com.co/consultaCiudadana/#/consultaVehiculo">
+                <PageLoaded>
+                    <EvaluateJS Handler="{onPageLoaded}">
+                        var result = {
+                            url : document.location.href
+                        };
+                        return result;
+                    </EvaluateJS>
+                </PageLoaded>
+            </WebView>
+        </NativeViewHost>
+	</DockPanel>
+</Page>

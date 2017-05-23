@@ -1,0 +1,16 @@
+<Page ux:Class="SplashPage">
+    <Router ux:Dependency="router" />
+
+	<StackPanel ContentAlignment="Center" Margin="50">
+		<Image File="assets/logo_splash.png" Width="250" Margin="0, 0, 0, 75" />
+		<Input Value="{email}" InputHint="Email" ActionStyle="Send" Placeholder="Correo Electrónico" />
+		<Input Value="{password}" Placeholder="Password" IsPassword="true" />
+	    <FilledButton Text="Ingresar" Margin="0, 0, 0, 15" Clicked="{login}" />
+		<TransparentButton Text="Si no tienes cuenta, toca aquí." />
+	</StackPanel>
+
+	<Rectangle Layer="Background" Fill="#000000" Opacity="0.75" />
+
+    <Video File="assets/bg.mov" StretchMode="UniformToFill" AutoPlay="true" IsLooping="true" Layer="Background">
+    </Video>
+</Page>

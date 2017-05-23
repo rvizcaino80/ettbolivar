@@ -1,0 +1,23 @@
+<Page ux:Class="ConsultaSimit" Color="#FFF">
+	<Router ux:Dependency="router" />
+
+	<JavaScript File="ConsultaSimit.js" />
+
+	<DockPanel>
+		<TopBar Dock="Top" />
+
+		<NativeViewHost Dock="Fill">
+            <WebView Url="https://consulta.simit.org.co/Simit/verificar/contenido_verificar_pago_linea.jsp">
+                <PageLoaded>
+                    <EvaluateJS Handler="{onPageLoaded}">
+                        var result = {
+                            url : document.location.href
+                        };
+                        return result;
+                    </EvaluateJS>
+                </PageLoaded>
+            </WebView>
+        </NativeViewHost>
+	</DockPanel>
+
+</Page>

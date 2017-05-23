@@ -1,0 +1,16 @@
+<Page ux:Class="MainMenu" Color="#FFF">
+	<Router ux:Dependency="router" />
+
+	<JavaScript File="MainMenu.js" />
+
+	<StackPanel>
+		<TopBar HideMenuIcon="true" />
+
+		<Grid RowCount="2" ColumnCount="2" Rows="auto,auto">
+			<Image Margin="5" File="../assets/servicio-runt.png" StretchMode="Uniform" Clicked="{gotoConsultaRunt}" />
+			<Image Margin="5" File="../assets/servicio-simit.png" StretchMode="Uniform" Clicked="{gotoConsultaSimit}" />
+			<Image Margin="5" File="../assets/servicio-notificaciones.png" StretchMode="Uniform" Clicked="{gotoNotificaciones}" />
+			<Image Margin="5" File="../assets/servicio-grua.png" StretchMode="Uniform" Clicked="{gotoServicioGrua}" />
+		</Grid>
+	</StackPanel>
+</Page>

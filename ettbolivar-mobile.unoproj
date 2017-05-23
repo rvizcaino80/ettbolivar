@@ -1,0 +1,14 @@
+{
+  "RootNamespace":"",
+  "Mobile":{
+  	"Orientations":  "Portrait"
+  },
+  "Packages": [
+    "Fuse",
+    "FuseJS"
+  ],
+  "Includes": [
+    "*",
+     "**.js:Bundle"
+  ]
+}
